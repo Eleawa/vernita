@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
+import 'package:vernita/core/network/api_constants.dart';
 import 'package:vernita/core/network/api_service.dart';
 import 'package:vernita/core/network/dio_factory.dart';
 import 'package:vernita/core/storage/auth_token_storage.dart';
@@ -30,10 +31,11 @@ Future<void> getItSetup() async {
   getIt.registerLazySingleton<AuthTokenStorage>(() => AuthTokenStorage());
 
   Dio dio = DioFactory.getDio(getIt<AuthTokenStorage>());
-  getIt.registerLazySingleton<ApiService>(() => ApiService(dio));
+  getIt.registerLazySingleton<ApiService>(() => ApiService(dio, baseUrl: ApiEndPoints.apiBaseUrl),
+  );
 
   getIt.registerLazySingleton<SignUpRepo>(() => SignUpRepoImp(getIt()));
-  getIt.registerFactory<SignUpCubit>(() => SignUpCubit(getIt()));
+  getIt.registerFactory<SignUpCubit>(() => SignUpCubit(getIt(), getIt(), getIt()));
 
   getIt.registerLazySingleton<LogInRepo>(() => LogInRepoImp(getIt()));
   getIt.registerFactory<LogInCubit>(() => LogInCubit(getIt(), getIt()));
@@ -45,5 +47,5 @@ Future<void> getItSetup() async {
   getIt.registerFactory<ResetPassCubit>(() => ResetPassCubit(getIt()));
 
   getIt.registerLazySingleton<ProfileRepo>(() => ProfileRepoImp(getIt()));
-  getIt.registerFactory<ProfileCubit>(() => ProfileCubit(getIt()));
+  getIt.registerFactory<ProfileCubit>(() => ProfileCubit(getIt(), getIt()));
 }
