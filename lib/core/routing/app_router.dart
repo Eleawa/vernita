@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vernita/core/di/dependency_injection.dart';
 import 'package:vernita/core/routing/routes.dart';
+import 'package:vernita/features/analytics/interview_questions_feedback/ui/interview_questions_feedback_screen.dart';
+import 'package:vernita/features/analytics/session_analysis/ui/session_analysis_screen.dart';
+import 'package:vernita/features/analytics/skill_breakdown/ui/detailed_skill_breakdown_screen.dart';
 import 'package:vernita/features/authentication/forget_password/logic/forget_pass_cubit.dart';
 import 'package:vernita/features/authentication/forget_password/ui/forget_pass_screen.dart';
 import 'package:vernita/features/authentication/log_in/logic/log_in_cubit.dart';
@@ -26,6 +29,20 @@ import 'package:vernita/features/profile/profile/ui/personal_info_screen.dart';
 import 'package:vernita/features/profile/security/ui/security_screen.dart';
 
 class AppRouter {
+  AppRouter({GlobalKey<NavigatorState>? navigatorKey})
+    : navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>();
+
+  final GlobalKey<NavigatorState> navigatorKey;
+
+  /// Clears the navigation stack and returns to the login screen after a
+  /// logout or a protected-request authentication failure.
+  void goToLogin() {
+    navigatorKey.currentState?.pushNamedAndRemoveUntil(
+      Routes.logIn,
+      (route) => false,
+    );
+  }
+
   Route generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case Routes.onboarding:
@@ -71,6 +88,16 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const HomeScreen());
       case Routes.interviewSession:
         return MaterialPageRoute(builder: (_) => const InterviewScreen());
+      case Routes.sessionAnalysis:
+        return MaterialPageRoute(builder: (_) => const SessionAnalysisScreen());
+      case Routes.detailedSkillBreakdown:
+        return MaterialPageRoute(
+          builder: (_) => const DetailedSkillBreakdownScreen(),
+        );
+      case Routes.interviewQuestionsFeedback:
+        return MaterialPageRoute(
+          builder: (_) => const InterviewQuestionsFeedbackScreen(),
+        );
       case Routes.notifications:
         return MaterialPageRoute(builder: (_) => const NotificationsScreen());
       case Routes.settings:
@@ -100,7 +127,7 @@ class AppRouter {
           builder: (_) => MultiBlocProvider(
             providers: [
               BlocProvider(create: (_) => BottomNavCubit()),
-              BlocProvider(create: (_) => getIt<CvUploadCubit>()),
+              BlocProvider(create: (_) => getIt<CvUploadCubit>()..fetchCvs()),
             ],
             child: const MainLayout(),
           ),

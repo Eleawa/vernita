@@ -15,4 +15,8 @@ class Routes {
   static const String notificationSettings = '/notification-settings';
   static const String addEvent = '/add-event';
   static const String addTask = '/add-task';
+  static const String sessionAnalysis = '/session-analysis';
+  static const String detailedSkillBreakdown = '/detailed-skill-breakdown';
+  static const String interviewQuestionsFeedback =
+      '/interview-questions-feedback';
 }

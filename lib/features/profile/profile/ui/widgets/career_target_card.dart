@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:vernita/core/theme/app_text_styles.dart';
 import 'package:vernita/features/home/logic/cv_upload_cubit.dart';
-import 'package:vernita/features/home/logic/cv_upload_state.dart';
+import 'package:vernita/features/home/logic/cv_state.dart';
 import '../../../widgets/info_tile.dart';
 import '../../../widgets/section_card.dart';
 import '../../../widgets/status_chip.dart';
@@ -32,28 +32,28 @@ class CareerTargetCard extends StatelessWidget {
   }
 }
 
-/// The CV isn't part of /users/me (it has its own /resumes endpoints),
-/// so for now we show the CV picked on Home. TODO: connect with /resumes.
 class _CvTile extends StatelessWidget {
   const _CvTile();
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<CvUploadCubit, CvUploadState>(
+    return BlocBuilder<CvUploadCubit, CvState>(
       builder: (context, state) {
-        final cv = state is HomeCvUploaded ? state.cv : null;
+        final cv = state is CvLoaded
+            ? state.cv
+            : state.cvs.where((item) => item.active).firstOrNull;
 
         return InfoTile(
           icon: Icons.description_outlined,
           label: 'Uploaded CV / Resume',
-          value: cv?.name ?? 'No CV uploaded yet',
+          value: cv?.fileName ?? 'No CV uploaded yet',
           valueWidget: cv == null
               ? null
               : Row(
                   children: [
                     Flexible(
                       child: Text(
-                        cv.name,
+                        cv.fileName,
                         overflow: TextOverflow.ellipsis,
                         style: AppTextStyles.font12GreyPoppins400W,
                       ),

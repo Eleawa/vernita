@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vernita/core/storage/auth_token_storage.dart';
-import 'package:vernita/features/authentication/log_in/data/models/log_in_request_model.dart';
 import 'package:vernita/features/authentication/log_in/data/repo/log_in_repo.dart';
 import 'package:vernita/features/authentication/sign_up/data/models/sign_up_request_model.dart';
 import 'package:vernita/features/authentication/sign_up/data/repo/sign_up_repo.dart';
@@ -34,45 +33,10 @@ class SignUpCubit extends Cubit<SignUpState> {
         );
       },
       (user) async {
-        // The register response has no token, so sign in right away with the
-        // same credentials. Without a token /users/me (the profile) can't load.
-        final signedIn = await _signInAfterSignUp(signUpBodyRequest);
+        // Registration does not create an authenticated session: after a
+        // successful sign up the user goes back to Login and signs in there.
         if (isClosed) return;
-        if (signedIn) {
-          emit(SignUpState.success(user));
-        } else {
-          emit(
-            const SignUpState.failure(
-              errMessage:
-                  'Your account was created, but we could not sign you in. Please log in.',
-            ),
-          );
-        }
-      },
-    );
-  }
-
-  Future<bool> _signInAfterSignUp(SignUpRequestModel request) async {
-    final loginResult = await logInRepo.logIn(
-      LogInRequestModel(
-        email: request.email,
-        password: request.password,
-        rememberMe: false,
-      ),
-    );
-
-    return loginResult.fold(
-      (_) async => false,
-      (response) async {
-        try {
-          await authTokenStorage.saveToken(
-            accessToken: response.accessToken,
-            rememberMe: false,
-          );
-          return true;
-        } catch (_) {
-          return false;
-        }
+        emit(SignUpState.success(user));
       },
     );
   }

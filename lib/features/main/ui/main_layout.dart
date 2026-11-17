@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vernita/features/analytics/performance/ui/analytics_screen.dart';
 import 'package:vernita/features/calendar/ui/calendar_screen.dart';
+import 'package:vernita/features/home/logic/cv_state.dart';
 import 'package:vernita/features/home/logic/cv_upload_cubit.dart';
-import 'package:vernita/features/home/logic/cv_upload_state.dart';
 import 'package:vernita/features/home/ui/home_screen.dart';
 import 'package:vernita/features/home/ui/widgets/home_before_upload_cv/error_dialog.dart';
 import 'package:vernita/features/interview/ui/interview_screen.dart';
@@ -13,13 +14,27 @@ import 'package:vernita/features/profile/profile/ui/profile_screen.dart';
 class MainLayout extends StatelessWidget {
   const MainLayout({super.key});
 
+  bool _hasActiveCv(CvState state) {
+    if (state is CvError &&
+        (state.actionType == CvActionType.fetch ||
+            state.actionType == CvActionType.upload)) {
+      return false;
+    }
+
+    if (state is CvLoaded) {
+      return state.cv != null;
+    }
+
+    return state.cvs.any((cv) => cv.active);
+  }
+
   @override
   Widget build(BuildContext context) {
     const pages = [
       HomeScreen(),
       CalendarScreen(),
       InterviewScreen(),
-      Scaffold(body: Center(child: Text('Analytics Screen'))),
+      AnalyticsScreen(),
       ProfileScreen(),
     ];
 
@@ -27,11 +42,18 @@ class MainLayout extends StatelessWidget {
       builder: (context, index) {
         return Scaffold(
           extendBody: true,
-          body: IndexedStack(index: index, children: pages),
+          body: IndexedStack(
+            index: index,
+            children: [
+              // Pausing tickers for hidden tabs keeps implicit animations
+              // from running before their tab is actually opened.
+              for (var i = 0; i < pages.length; i++)
+                TickerMode(enabled: i == index, child: pages[i]),
+            ],
+          ),
           bottomNavigationBar: CustomBottomNavBar(
             onCenterTap: () {
-              final hasCv =
-                  context.read<CvUploadCubit>().state is HomeCvUploaded;
+              final hasCv = _hasActiveCv(context.read<CvUploadCubit>().state);
 
               if (!hasCv) {
                 showDialog(
