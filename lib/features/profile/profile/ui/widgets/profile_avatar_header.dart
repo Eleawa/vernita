@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:vernita/core/theme/app_text_styles.dart';
-import '../../../widgets/app_card.dart';
+import 'package:vernita/core/widgets/app_card.dart';
 import '../../../widgets/avatar_circle.dart';
 import '../../data/models/user_model.dart';
 

@@ -39,17 +39,20 @@ class VernitaApp extends StatelessWidget {
               value: SystemUiOverlayStyle.dark.copyWith(
                 statusBarColor: Colors.transparent,
               ),
-              child: BlocListener<AuthSessionCubit, AuthSessionState>(
-                listenWhen: (previous, current) =>
-                    previous.isLoggedInUser && !current.isLoggedInUser,
-                listener: (context, state) => appRouter.goToLogin(),
-                // App-wide cubits: available in every screen, including pushed routes.
-                child: MultiBlocProvider(
-                  providers: [
-                    // No load() here: ProfileScreen loads it after login (we need the token).
-                    BlocProvider(create: (_) => getIt<ProfileCubit>()),
-                    BlocProvider(create: (_) => getIt<CalendarCubit>()),
-                  ],
+              // App-wide cubits: available in every screen, including pushed routes.
+              child: MultiBlocProvider(
+                providers: [
+                  // No load() here: ProfileScreen loads it after login (we need the token).
+                  BlocProvider(create: (_) => getIt<ProfileCubit>()),
+                  BlocProvider(create: (_) => getIt<CalendarCubit>()),
+                ],
+                child: BlocListener<AuthSessionCubit, AuthSessionState>(
+                  listenWhen: (previous, current) =>
+                      previous.isLoggedInUser && !current.isLoggedInUser,
+                  listener: (context, state) {
+                    context.read<ProfileCubit>().clear();
+                    appRouter.goToLogin();
+                  },
                   child: Container(
                     decoration: const BoxDecoration(
                       gradient: LinearGradient(

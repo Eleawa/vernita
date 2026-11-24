@@ -3,7 +3,7 @@ import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
 import 'package:vernita/core/theme/app_colors.dart';
 import 'package:vernita/core/theme/app_text_styles.dart';
-import 'app_card.dart';
+import 'package:vernita/core/widgets/app_card.dart';
 
 /// A card holding a list of rows separated by thin dividers.
 /// Pass [title] to show the small label inside the card (Profile screen).

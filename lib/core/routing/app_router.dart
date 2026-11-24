@@ -21,7 +21,7 @@ import 'package:vernita/features/home/logic/cv_upload_cubit.dart';
 import 'package:vernita/features/interview/ui/interview_screen.dart';
 import 'package:vernita/features/main/logic/bottom_nav_cubit.dart';
 import 'package:vernita/features/main/ui/main_layout.dart';
-import 'package:vernita/features/profile/settings/notificationsSettings/ui/notifications_setting_screen.dart';
+import 'package:vernita/features/profile/settings/notifications_settings/ui/notifications_setting_screen.dart';
 import 'package:vernita/features/onboarding/ui/onboarding_screen.dart';
 import 'package:vernita/features/notifications/ui/notifications_screen.dart';
 import 'package:vernita/features/profile/settings/ui/settings_screen.dart';

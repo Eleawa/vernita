@@ -3,7 +3,7 @@ import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
 import 'package:vernita/core/theme/app_colors.dart';
 import 'package:vernita/core/theme/app_text_styles.dart';
-import 'icon_box.dart';
+import 'package:vernita/core/widgets/icon_box.dart';
 
 /// Generic list row: [icon box] title / subtitle ........ value / trailing / chevron.
 class ProfileTile extends StatelessWidget {

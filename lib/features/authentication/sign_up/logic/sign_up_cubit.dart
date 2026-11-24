@@ -23,6 +23,15 @@ class SignUpCubit extends Cubit<SignUpState> {
   SignUpCubit(this.signUpRepo, this.logInRepo, this.authSessionCubit)
     : super(const SignUpState.initial());
 
+  @override
+  Future<void> close() {
+    fullNamecontroller.dispose();
+    emailcontroller.dispose();
+    passwordcontroller.dispose();
+    confirmPasswordcontroller.dispose();
+    return super.close();
+  }
+
   Future<void> emitSignUpState(SignUpRequestModel signUpBodyRequest) async {
     emit(const SignUpState.loading());
     final result = await signUpRepo.signUp(signUpBodyRequest);

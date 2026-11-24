@@ -19,6 +19,7 @@ class ProfileCubit extends Cubit<ProfileState> {
     // No token = the user is not logged in yet, so don't call the backend
     // (it would answer 401/403 and we'd show a confusing error).
     final token = await tokenStorage.readToken();
+    if (isClosed) return;
     if (token == null || token.isEmpty) {
       emit(
         const ProfileState(
@@ -33,6 +34,7 @@ class ProfileCubit extends Cubit<ProfileState> {
     emit(const ProfileState(status: ProfileStatus.loading));
 
     final result = await profileRepo.getProfile();
+    if (isClosed) return;
 
     result.fold(
       (failure) => emit(
@@ -43,6 +45,12 @@ class ProfileCubit extends Cubit<ProfileState> {
       ),
       (user) => emit(ProfileState(status: ProfileStatus.loaded, user: user)),
     );
+  }
+
+  /// Clears cached profile state (e.g. on logout).
+  void clear() {
+    if (isClosed) return;
+    emit(const ProfileState());
   }
 
   /// Clears the last save result, so an old error / success doesn't show up
@@ -62,6 +70,7 @@ class ProfileCubit extends Cubit<ProfileState> {
     final updatedUser = field.write(current, value);
     final request = UpdateProfileRequestModel.fromUser(updatedUser);
     final result = await profileRepo.updateProfile(request);
+    if (isClosed) return;
 
     result.fold(
       (failure) => emit(
